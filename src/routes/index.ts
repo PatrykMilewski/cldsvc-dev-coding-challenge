@@ -1,6 +1,6 @@
-const express = require('express');
+import { Router } from 'express';
 
-const router = express.Router();
+export const router = Router();
 
 /*
   let orderbook = { }
@@ -9,10 +9,12 @@ const router = express.Router();
         impact efficiency.
 */
 
-const TYPE_FILLED = 'FILLED'; // order matched entirely
-const TYPE_PARTIALLY_FILLED = 'PARTIALLY_FILLED'; // order matched partially and is pending in orderbook
-const TYPE_REJECTED = 'REJECTED'; // order failed to match
-const TYPE_PENDING = 'PENDING'; // order did not match and is pending in orderbook
+enum OrderTypes {
+  FILLED = 'FILLED', // order matched entirely
+  PARTIALLY_FILLED = 'PARTIALLY_FILLED', // order matched entirely
+  REJECTED = 'REJECTED', // order matched entirely
+  PENDING = 'PENDING', // order matched entirely
+}
 
 // eslint-disable-next-line no-unused-vars
 router.post('/order/submit', (req, res, next) => {
@@ -54,5 +56,3 @@ router.get('/orderbook', (req, res, next) => {
     }
   */
 });
-
-module.exports = router;

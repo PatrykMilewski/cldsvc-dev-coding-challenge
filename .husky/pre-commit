@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+OS=$(uname -s)
+# check if Windows
+if [[ "$OS" == *"MINGW"* ]]; then
+    alias npx='npx.cmd'
+fi
+
+yarn run check-all

@@ -1,0 +1,8 @@
+dist
+.eslintrc.js
+node_modules
+package-lock.json
+tsconfig.json
+jest.config.js
+commitlint.config.js
+src/bin/www

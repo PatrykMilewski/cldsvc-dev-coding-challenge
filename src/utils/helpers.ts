@@ -1,49 +1,33 @@
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-const http = require('http');
-const app = require('../app');
-
 /**
  * Normalize a port into a number, string, or false.
  */
+import { port, server } from '../app';
 
-function normalizePort(val) {
-  const port = parseInt(val, 10);
+export const normalizePort = (val: string): string | number | boolean => {
+  const parsedPort = parseInt(val, 10);
 
-  if (Number.isNaN(port)) {
+  if (Number.isNaN(parsedPort)) {
     // named pipe
     return val;
   }
 
-  if (port >= 0) {
+  if (parsedPort >= 0) {
     // port number
-    return port;
+    return parsedPort;
   }
 
   return false;
-}
-
-/**
- * Get port from environment and store in Express.
- */
-
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+};
 
 /**
  * Event listener for HTTP server "error" event.
  */
-
-function onError(error) {
+export const onError = (error: ExpressError): void => {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
+  const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port.toString()}`;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -58,28 +42,19 @@ function onError(error) {
     default:
       throw error;
   }
+};
+
+interface ExpressError extends Error {
+  syscall?: string;
+  code?: string;
 }
-
-/**
- * Create HTTP server.
- */
-
-const server = http.createServer(app);
 
 /**
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
+export const onListening = (): void => {
   const addr = server.address();
-  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr?.port ?? 'unknown'}`;
   console.log(`Listening on ${bind}`); // eslint-disable-line no-console
-}
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+};
