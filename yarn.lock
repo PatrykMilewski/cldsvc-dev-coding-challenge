@@ -1433,6 +1433,11 @@ balanced-match@^1.0.0:
   resolved "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
+base-convert-int-array@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/base-convert-int-array/-/base-convert-int-array-1.0.1.tgz#5b4ddbfa72d2d3b5f75dd86cd32fe3dc8e7e81fe"
+  integrity sha512-NWqzaoXx8L/SS32R+WmKqnQkVXVYl2PwNJ68QV3RAlRRL1uV+yxJT66abXI1cAvqCXQTyXr7/9NN4Af90/zDVw==
+
 bash-glob@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/bash-glob/-/bash-glob-2.0.0.tgz#a8ef19450783403ed93fccca2dbe09f2cf6320dc"
@@ -3717,6 +3722,13 @@ kleur@^3.0.3:
   resolved "https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
+ksuid@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/ksuid/-/ksuid-3.0.0.tgz#aeef71afc9409fd7aae2d42bc236c7b00fa9f4b8"
+  integrity sha512-81CkBGn/06ZVAjGvFZi6fVG8VcPeMH0JpJ4V1Z9VwrMMaGIeAjY4jrVdrIcxhL9I2ZUU6t5uiyswcmkk+KZegA==
+  dependencies:
+    base-convert-int-array "^1.0.1"
+
 leven@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz#77891de834064cccba82ae7842bb6b14a13ed7f2"
@@ -5156,6 +5168,11 @@ tslib@^2.4.0:
   version "2.4.0"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+
+tstl@^2.5.8:
+  version "2.5.8"
+  resolved "https://registry.npmjs.org/tstl/-/tstl-2.5.8.tgz#8d5eb81573bb01eb4f1603d0f7bb1668a2faa7e7"
+  integrity sha512-NtwB4wQA0QQOqVYq+AEx9d8BlKGjFKHTf24XJlWmUkIQ4o7QOl4ecwrfWzx+bAbUu2KdNb/2iNgCyHJKvEuwXw==
 
 tsutils@^3.21.0:
   version "3.21.0"
