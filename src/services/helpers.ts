@@ -1,5 +1,6 @@
 import { InputOrder, Order, OrderStatus, OrderTypes, ValidInputOrder } from '../types';
 import KSUID from 'ksuid';
+import { z, ZodError } from 'zod';
 
 export const parseInputToOrder = (input: ValidInputOrder): Order => {
   const timestamp = Date.now();
@@ -13,12 +14,12 @@ export const parseInputToOrder = (input: ValidInputOrder): Order => {
   };
 };
 
-export const isValidInputOrder = (input: Partial<InputOrder>): boolean => {
-  if (!input.amount || !input.price || !input.type) {
-    return false;
-  }
-  if (typeof input.amount !== 'number' || typeof input.price !== 'number' || typeof input.type !== 'string') {
-    return false;
-  }
-  return Object.values(OrderTypes).includes(input.type as OrderTypes);
+export const orderInputSchema = z.object({
+  amount: z.number().min(1).max(99),
+  price: z.number().min(1),
+  type: z.nativeEnum(OrderTypes),
+});
+
+export const isValidInputOrder = (input: Partial<InputOrder>): { success: boolean; error?: ZodError } => {
+  return orderInputSchema.safeParse(input);
 };

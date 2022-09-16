@@ -12,7 +12,8 @@ router.post(
   (req: Request<InputOrderPartial, Order | InputError, InputOrderPartial>, res: Response<Order | InputError>) => {
     const input: InputOrderPartial = req.body;
 
-    if (isValidInputOrder(input)) {
+    const inputValidationResults = isValidInputOrder(input);
+    if (inputValidationResults.success) {
       const validInput = input as ValidInputOrder;
       const order: Order = parseInputToOrder(validInput);
 
@@ -30,9 +31,10 @@ router.post(
       }
       res.status(200).json(processedOrder);
     } else {
-      res.status(400).send({
-        message: 'Valid amount, price and order type are required',
-      });
+      const message = inputValidationResults.error?.message
+        ? inputValidationResults.error?.message
+        : 'Valid amount, price and order type are required';
+      res.status(400).send({ message });
     }
   },
 );

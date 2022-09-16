@@ -162,7 +162,7 @@ describe('API tests', () => {
     const firstSellOrder = buildOrderInput(10, 10, OrderTypes.SELL);
     const secondSellOrder = buildOrderInput(11, 10, OrderTypes.SELL);
     const thirdSellOrder = buildOrderInput(20, 10, OrderTypes.SELL);
-    const buyOrder = buildOrderInput(15, 100, OrderTypes.BUY);
+    const buyOrder = buildOrderInput(15, 90, OrderTypes.BUY);
 
     await request(app).post('/order/submit').send(firstSellOrder);
     await request(app).post('/order/submit').send(secondSellOrder);
@@ -171,7 +171,7 @@ describe('API tests', () => {
 
     const orderbook = await request(app).get('/orderbook');
 
-    const buyOrderPartiallyFilled = buildOrderInput(15, 80, OrderTypes.BUY);
+    const buyOrderPartiallyFilled = buildOrderInput(15, 70, OrderTypes.BUY);
     const buyOrderPartiallyFilledMatcher = buildOrderMatcher(buyOrderPartiallyFilled, OrderStatus.PARTIALLY_FILLED);
     const sellOrderHighestPriceMatcher = buildOrderMatcher(thirdSellOrder, OrderStatus.PENDING);
 
@@ -184,7 +184,7 @@ describe('API tests', () => {
     const firstBuyOrder = buildOrderInput(10, 10, OrderTypes.BUY);
     const secondBuyOrder = buildOrderInput(11, 10, OrderTypes.BUY);
     const thirdBuyOrder = buildOrderInput(1, 10, OrderTypes.BUY);
-    const sellOrder = buildOrderInput(5, 100, OrderTypes.SELL);
+    const sellOrder = buildOrderInput(5, 90, OrderTypes.SELL);
 
     await request(app).post('/order/submit').send(firstBuyOrder);
     await request(app).post('/order/submit').send(secondBuyOrder);
@@ -193,7 +193,7 @@ describe('API tests', () => {
 
     const orderbook = await request(app).get('/orderbook');
 
-    const sellOrderPartiallyFilled = buildOrderInput(5, 80, OrderTypes.SELL);
+    const sellOrderPartiallyFilled = buildOrderInput(5, 70, OrderTypes.SELL);
     const sellOrderPartiallyFilledMatcher = buildOrderMatcher(sellOrderPartiallyFilled, OrderStatus.PARTIALLY_FILLED);
     const buyOrderLowestPriceMatcher = buildOrderMatcher(thirdBuyOrder, OrderStatus.PENDING);
 
@@ -231,6 +231,33 @@ describe('API tests', () => {
     const response = await request(app).post('/order/submit').send({
       amount: 10,
       price: 10,
+    });
+    expect(response.status).toBe(400);
+  });
+
+  it('should return bad request if amount is greater than 99', async () => {
+    const response = await request(app).post('/order/submit').send({
+      amount: 100,
+      price: 10,
+      type: OrderTypes.SELL,
+    });
+    expect(response.status).toBe(400);
+  });
+
+  it('should return bad request if amount is smaller than 1', async () => {
+    const response = await request(app).post('/order/submit').send({
+      amount: -1,
+      price: 10,
+      type: OrderTypes.SELL,
+    });
+    expect(response.status).toBe(400);
+  });
+
+  it('should return bad request if price is smaller than 1', async () => {
+    const response = await request(app).post('/order/submit').send({
+      amount: 10,
+      price: -10,
+      type: OrderTypes.SELL,
     });
     expect(response.status).toBe(400);
   });
