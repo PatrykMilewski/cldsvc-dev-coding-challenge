@@ -4,6 +4,8 @@
 
 - I've changed the data structure for submitting orders, now it includes `type` field, which can be buy or sell. In my
   opinion it's way more readable to do it this way, instead of playing with minus values for amount
+- I've used TreeSet for asks and bids, so the highest/lowest offers are always `O(1)` to find and inserting new offers
+  is only `O(log n)`
 - Refactored everything to TypeScript - I was not feeling safe to write code in JavaScript
 - Filled orders are moved to transactions, which has a log of finalised transactions. This can be also listed using
   `GET transactions`
