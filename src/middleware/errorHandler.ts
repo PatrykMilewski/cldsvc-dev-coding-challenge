@@ -1,5 +1,5 @@
 import createError from 'http-errors';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 // eslint-disable-next-line no-unused-vars
 export const errorHandler = (err: Error, req: Request, res: Response) => {

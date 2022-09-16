@@ -1,5 +1,28 @@
 # IO Backend Coding Challenge
 
+# Architecture/dev decisions
+
+- I've changed the data structure for submitting orders, now it includes `type` field, which can be buy or sell. In my
+  opinion it's way more readable to do it this way, instead of playing with minus values for amount
+- Refactored everything to TypeScript - I was not feeling safe to write code in JavaScript
+- Filled orders are moved to transactions, which has a log of finalised transactions. This can be also listed using
+  `GET transactions`
+- To make everything more production ready, I've introduced a few useful tools like:
+  - commit lint for linting commit messages, [https://www.conventionalcommits.org/](https://www.conventionalcommits.org/)
+  - ESLint for TypeScript with AirBNB rules, for better types and issues checking during development
+  - Husky for automatically checking stuff before pushing changes to repository
+- The structure of files for Express was quite strange for me (`bin/www` file mostly), I've refactored it to include it
+  simply in the `app.ts` + `helpers.ts`
+
+# Potential issues/improvement points
+
+- It was my first time working with Express, probably its configuration could be improved
+- I'm not an expert about hosting containers, I've never had a requirement to setup it in AWS, so most probably
+  the configuration of it could be better
+- Having that much dev tools, that help to check common issues etc. is cool, however it significantly increases 
+ number of dependencies, that could have vulnerabilities or other security risks. For financial related projects 
+  this might be an issue
+
 # Task
 Create an exchange matching engine API that receives new buy & sell orders and matches them against its local orderbook.
 
