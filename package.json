@@ -18,7 +18,9 @@
     "audit:fix": "npx yarn-audit-fix",
     "check-all": "npm-run-all --parallel --print-label test lint audit check-types",
     "prepare": "husky install",
-    "check-types": "tsc --noEmit --skipLibCheck"
+    "check-types": "tsc --noEmit --skipLibCheck",
+    "docker:build": "docker build . -t patrykmilewski/cldsvc-dev-backend-coding-challenge",
+    "docker:run": "docker run -p 3000:3000 -d patrykmilewski/cldsvc-dev-backend-coding-challenge"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.3",
