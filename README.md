@@ -20,8 +20,9 @@
 - I'm not an expert about hosting containers, I've never had a requirement to setup it in AWS, so most probably
   the configuration of it could be better
 - Having that much dev tools, that help to check common issues etc. is cool, however it significantly increases 
- number of dependencies, that could have vulnerabilities or other security risks. For financial related projects 
+  number of dependencies, that could have vulnerabilities or other security risks. For financial related projects 
   this might be an issue
+- Changing the architecture might be good idea, so it would be possible to scale horizontally (more explanations in Dockerfile)
 
 # Task
 Create an exchange matching engine API that receives new buy & sell orders and matches them against its local orderbook.
