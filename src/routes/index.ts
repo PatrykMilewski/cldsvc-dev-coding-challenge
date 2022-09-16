@@ -64,6 +64,7 @@ const handleBuyOrder = (buyOrder: Order): Order => {
     if (theLowestSellPriceOffer.amount >= buyOrder.amount) {
       theLowestSellPriceOffer.amount -= buyOrder.amount;
       buyOrder.amount = 0;
+      theLowestSellPriceOffer.status = OrderStatus.PARTIALLY_FILLED;
 
       // sold all
       if (theLowestSellPriceOffer.amount === 0) {
@@ -102,6 +103,7 @@ const handleSellOrder = (sellOrder: Order): Order => {
     if (theHighestBuyPriceOffer.amount >= sellOrder.amount) {
       theHighestBuyPriceOffer.amount -= sellOrder.amount;
       sellOrder.amount = 0;
+      theHighestBuyPriceOffer.status = OrderStatus.PARTIALLY_FILLED;
 
       // sold all
       if (theHighestBuyPriceOffer.amount === 0) {

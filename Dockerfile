@@ -11,6 +11,7 @@ RUN yarn ci
 
 # Bundle app source
 COPY . .
+RUN yarn run clean:build
 
 EXPOSE 3000
 CMD yarn run start

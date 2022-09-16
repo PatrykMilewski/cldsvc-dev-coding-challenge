@@ -117,6 +117,27 @@ describe('API tests', () => {
     );
   });
 
+  it('sell order should be filled, when there is a buyer, that wants to buy more than the amount offered', async () => {
+    const buyOrder = buildOrderInput(10, 10, OrderTypes.BUY);
+    const sellOrder = buildOrderInput(10, 5, OrderTypes.SELL);
+
+    await request(app).post('/order/submit').send(buyOrder);
+    await request(app).post('/order/submit').send(sellOrder);
+
+    const orderbook = await request(app).get('/orderbook');
+
+    const buyOrderAfterUpdateMatcher = buildOrderMatcher(
+      {
+        price: 10,
+        amount: 5,
+        type: OrderTypes.BUY,
+      },
+      OrderStatus.PARTIALLY_FILLED,
+    );
+
+    expect(orderbook.body).toMatchObject(buildOrderbookMatcher([], [buyOrderAfterUpdateMatcher]));
+  });
+
   it('orderbook should be sorted by price for asks', async () => {
     const firstOrder = buildOrderInput(10, 10, OrderTypes.SELL);
     const secondOrder = buildOrderInput(5, 10, OrderTypes.SELL);
