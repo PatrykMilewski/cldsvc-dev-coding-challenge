@@ -27,6 +27,7 @@ type Order = PriceAndTime & {
   amount: number;
   status: OrderStatus;
   id: string;
+  filledTimestamp?: number;
 };
 type Offers = TreeSet<Order>;
 
@@ -83,12 +84,19 @@ router.post(
       const validInput = input as ValidInputOrder;
       const order: Order = getOrder(validInput);
 
-      if (order.status === OrderStatus.FILLED) {
-        saveFilledOrder(order);
+      let processedOrder: Order;
+      if (order.type === OrderTypes.BUY) {
+        processedOrder = handleBuyOrder(order);
+      } else {
+        processedOrder = handleSellOrder(order);
       }
-      saveNotFilledOrder(order);
 
-      res.status(200).json(order);
+      if (processedOrder.status === OrderStatus.FILLED) {
+        saveFilledOrder(processedOrder);
+      } else {
+        saveNotFilledOrder(processedOrder);
+      }
+      res.status(200).json(processedOrder);
     } else {
       res.status(400).send({
         message: 'Valid amount, price and order type are required',
@@ -106,11 +114,12 @@ router.get('/orderbook', (req: Request, res: Response<Orderbook>) => {
 });
 
 // eslint-disable-next-line no-unused-vars
-router.get('/transactions', (req, res: Response<Order[]>, next) => {
+router.get('/transactions', (req, res: Response<Order[]>) => {
   return res.status(200).json(transactions);
 });
 
 const saveFilledOrder = (order: Order): void => {
+  order.filledTimestamp = Date.now();
   transactions.push(order);
 };
 
@@ -138,8 +147,100 @@ const getOrder = (input: ValidInputOrder): Order => {
     id: KSUID.randomSync(timestamp).string,
     amount: input.amount,
     price: input.price,
-    status: OrderStatus.FILLED,
+    status: OrderStatus.PENDING,
     timestamp,
     type: input.type,
   };
+};
+
+const handleBuyOrder = (buyOrder: Order): Order => {
+  if (asks.size() === 0) {
+    return buyOrder;
+  }
+  const startingAmount = buyOrder.amount;
+  let theLowestSellPriceOffer = asks.begin().value;
+
+  // bought none
+  if (theLowestSellPriceOffer.price > buyOrder.price) {
+    buyOrder.status = OrderStatus.PENDING;
+    return buyOrder;
+  }
+  while (buyOrder.amount > 0 && asks.size() && theLowestSellPriceOffer.price <= buyOrder.amount) {
+    // bought all
+    if (theLowestSellPriceOffer.amount >= buyOrder.amount) {
+      theLowestSellPriceOffer.amount -= buyOrder.amount;
+      buyOrder.amount = 0;
+
+      // sold all
+      if (theLowestSellPriceOffer.amount === 0) {
+        setOrderFilled(theLowestSellPriceOffer);
+      }
+      break;
+    }
+    // bought some
+    else {
+      buyOrder.amount -= theLowestSellPriceOffer.amount;
+      setOrderFilled(theLowestSellPriceOffer);
+    }
+
+    theLowestSellPriceOffer = asks.begin().value;
+  }
+
+  buyOrder.status = getNewOrderStatus(buyOrder, startingAmount);
+  return buyOrder;
+};
+
+const handleSellOrder = (sellOrder: Order): Order => {
+  if (bids.size() === 0) {
+    return sellOrder;
+  }
+  const startingAmount = sellOrder.amount;
+  let theHighestBuyPriceOffer = bids.begin().value;
+
+  // bought none
+  if (theHighestBuyPriceOffer.price > sellOrder.price) {
+    sellOrder.status = OrderStatus.PENDING;
+    return sellOrder;
+  }
+
+  while (sellOrder.amount > 0 && asks.size() && theHighestBuyPriceOffer.price >= sellOrder.amount) {
+    // bought all
+    if (theHighestBuyPriceOffer.amount <= sellOrder.amount) {
+      theHighestBuyPriceOffer.amount -= sellOrder.amount;
+      sellOrder.amount = 0;
+
+      // sold all
+      if (theHighestBuyPriceOffer.amount === 0) {
+        setOrderFilled(theHighestBuyPriceOffer);
+      }
+      break;
+    }
+    // bought some
+    else {
+      sellOrder.amount -= theHighestBuyPriceOffer.amount;
+      setOrderFilled(theHighestBuyPriceOffer);
+    }
+
+    theHighestBuyPriceOffer = asks.begin().value;
+  }
+
+  sellOrder.status = getNewOrderStatus(sellOrder, startingAmount);
+  return sellOrder;
+};
+
+const getNewOrderStatus = (order: Order, startingAmount: number): OrderStatus => {
+  if (order.amount > 0 && startingAmount !== order.amount) {
+    return OrderStatus.PARTIALLY_FILLED;
+  } else if (order.amount > 0) {
+    return OrderStatus.PENDING;
+  } else {
+    return OrderStatus.FILLED;
+  }
+};
+
+const setOrderFilled = (order: Order): void => {
+  order.amount = 0;
+  order.status = OrderStatus.FILLED;
+  asks.erase(order);
+  saveFilledOrder(order);
 };
